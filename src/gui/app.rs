@@ -1,6 +1,5 @@
 use crate::gui::scenes::get_scene;
 use crate::gui::tools::{Message, Page, ShortElement};
-use crate::if_debug;
 use crate::instruments::qe::QuadraticEquationsContainer;
 use crate::instruments::{DataStore, DisplayableResult};
 
