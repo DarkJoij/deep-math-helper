@@ -30,22 +30,20 @@ impl Application for DeepMathHelper {
             Message::SetPage(page) => { 
                 self.data.current_page = page 
             },
-            Message::UpdateQEA(a) => {
+            Message::UpdateA(a) => {
                 self.data.qe_container.a = a;
             },
-            Message::UpdateQEB(b) => {
+            Message::UpdateB(b) => {
                 self.data.qe_container.b = b;
             },
-            Message::UpdateQEC(c) => {
+            Message::UpdateC(c) => {
                 self.data.qe_container.c = c;
             },
             Message::Calculate => {
-                match self.data.current_page {
-                    Page::Selection => {},
-                    Page::QuadraticEquations => {
-                        
-                        println!("Calculating...");
-                    }
+                if let Page::QuadraticEquations = self.data.current_page {
+                    let result = self.data.qe_container.calculate();
+                    println!("{}", &result);
+                    self.data.must_be_shown = result;
                 }
             }
         };

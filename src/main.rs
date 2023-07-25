@@ -3,8 +3,15 @@ mod instruments;
 
 use crate::gui::app::DeepMathHelper;
 
-use iced::{Application, Error, Settings};
+use iced::{Application, Error, Settings as IcedSettings};
+use iced::window::Settings as WindowSettings;
 
 fn main() -> Result<(), Error> {
-    DeepMathHelper::run(Settings::default())
+    DeepMathHelper::run(IcedSettings {
+        window: WindowSettings {
+            size: (500, 600),
+            ..WindowSettings::default()
+        },
+        ..IcedSettings::default()
+    })
 }
