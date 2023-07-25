@@ -2,10 +2,8 @@ use iced::{Element, Renderer, Theme};
 
 pub type ShortElement<'a> = Element<'a, Message, Renderer<Theme>>;
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
 pub enum Message {
-    #[default]
-    Loading,
     SetPage(Page),
     UpdateA(String),
     UpdateB(String),

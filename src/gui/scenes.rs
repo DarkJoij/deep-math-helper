@@ -7,7 +7,7 @@ use iced::Length;
 use iced::widget::{Button, Text};
 
 pub fn get_scene<'a>(data: &DataStore) -> ShortElement<'a> {
-    let main_page = get_default_column();
+    let main = get_default_column();
     let current_page = match data.current_page {
         Page::Selection => get_selection_page(data),
         Page::QuadraticEquations => get_quadratic_equations_page(data)
@@ -15,7 +15,7 @@ pub fn get_scene<'a>(data: &DataStore) -> ShortElement<'a> {
 
     let text_content = match &data.pending {
         DisplayableResult::None => {
-            return main_page.push(current_page)
+            return main.push(current_page)
                 .into();
         },
         DisplayableResult::Text(message) => format!("Error:\n{message}"),
@@ -27,7 +27,7 @@ pub fn get_scene<'a>(data: &DataStore) -> ShortElement<'a> {
         .vertical_alignment(Vertical::Center)
         .width(Length::Fill);
 
-    main_page.push(current_page)
+    main.push(current_page)
         .push(showing_text)
         .into()
 } 

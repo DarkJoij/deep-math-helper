@@ -30,9 +30,6 @@ impl Application for DeepMathHelper {
 
     fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
         match message {
-            Message::Loading => if_debug! {
-                println!("Loaded successfully!");
-            },
             Message::SetPage(page) => {
                 // Must be checked.
                 if let Page::Selection = page {
