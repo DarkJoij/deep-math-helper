@@ -1,32 +1,23 @@
 use crate::gui::defaults::*;
-use crate::gui::tools::{DataStore, Message, Page, ShortElement};
-use crate::instruments::DisplayableResult;
+use crate::gui::tools::{Message, Page, ShortElement};
+use crate::instruments::{DataStore, DisplayableResult};
 
 use iced::alignment::{Horizontal, Vertical};
 use iced::Length;
-use iced::widget::{Column, Text};
+use iced::widget::{Button, Text};
 
 pub fn get_scene<'a>(data: &DataStore) -> ShortElement<'a> {
-    let back_button = get_default_button("Back", Message::SetPage(Page::Selection));
-    let main = get_main_page(data);
-
-    if let Page::Selection = data.current_page {
-        return main.into();
-    }
-
-    main.push(back_button)
-        .into()
-}
-
-fn get_main_page<'a>(data: &DataStore) -> Column<'a, Message> {
     let main_page = get_default_column();
     let current_page = match data.current_page {
         Page::Selection => get_selection_page(data),
         Page::QuadraticEquations => get_quadratic_equations_page(data)
     };
 
-    let text_content = match &data.must_be_shown {
-        DisplayableResult::None => return main_page.push(current_page),
+    let text_content = match &data.pending {
+        DisplayableResult::None => {
+            return main_page.push(current_page)
+                .into();
+        },
         DisplayableResult::Text(message) => format!("Error:\n{message}"),
         DisplayableResult::Single(number) => format!("Answer:\nx = {number}."),
         DisplayableResult::Double(one, two) => format!("Answer:\nx1 = {one}, x2 = {two}.")
@@ -38,6 +29,7 @@ fn get_main_page<'a>(data: &DataStore) -> Column<'a, Message> {
 
     main_page.push(current_page)
         .push(showing_text)
+        .into()
 } 
 
 fn get_selection_page<'a>(_data: &DataStore) -> ShortElement<'a> {
@@ -65,5 +57,10 @@ fn get_quadratic_equations_page<'a>(data: &DataStore) -> ShortElement<'a> {
     get_default_column()
         .push(coefficients)
         .push(calculate_button)
+        .push(get_back_button())
         .into()
+}
+
+fn get_back_button<'a>() -> Button<'a, Message> {
+    get_default_button("Back", Message::SetPage(Page::Selection))
 }

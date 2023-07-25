@@ -1,5 +1,8 @@
 pub mod qe;
 
+use crate::gui::tools::Page;
+use crate::instruments::qe::QuadraticEquationsContainer;
+
 use std::fmt::{Display, Formatter, Result};
 
 #[allow(dead_code)]
@@ -35,4 +38,13 @@ impl Display for DisplayableResult {
             DisplayableResult::Double(one, two) => format!("{}, {}", one, two)
         })
     }
+}
+
+#[derive(Default)]
+pub struct DataStore {
+    pub query: String,
+    pub current_page: Page,
+    pub pending: DisplayableResult,
+
+    pub qe_container: QuadraticEquationsContainer
 }

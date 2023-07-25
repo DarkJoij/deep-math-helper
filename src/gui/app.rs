@@ -1,5 +1,8 @@
 use crate::gui::scenes::get_scene;
-use crate::gui::tools::{DataStore, Message, Page, ShortElement};
+use crate::gui::tools::{Message, Page, ShortElement};
+use crate::if_debug;
+use crate::instruments::qe::QuadraticEquationsContainer;
+use crate::instruments::{DataStore, DisplayableResult};
 
 use iced::executor::Default as DefaultExecutor;
 use iced::{Application, Command, Theme};
@@ -27,8 +30,17 @@ impl Application for DeepMathHelper {
 
     fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
         match message {
-            Message::SetPage(page) => { 
-                self.data.current_page = page 
+            Message::Loading => if_debug! {
+                println!("Loaded successfully!");
+            },
+            Message::SetPage(page) => {
+                // Must be checked.
+                if let Page::Selection = page {
+                    self.data.pending = DisplayableResult::None;
+                    self.data.qe_container = QuadraticEquationsContainer::default();
+                }
+
+                self.data.current_page = page;
             },
             Message::UpdateA(a) => {
                 self.data.qe_container.a = a;
@@ -41,9 +53,7 @@ impl Application for DeepMathHelper {
             },
             Message::Calculate => {
                 if let Page::QuadraticEquations = self.data.current_page {
-                    let result = self.data.qe_container.calculate();
-                    println!("{}", &result);
-                    self.data.must_be_shown = result;
+                    self.data.pending = self.data.qe_container.calculate();
                 }
             }
         };
