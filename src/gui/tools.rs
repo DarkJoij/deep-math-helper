@@ -5,9 +5,9 @@ pub type ShortElement<'a> = Element<'a, Message, Renderer<Theme>>;
 #[derive(Clone, Debug)]
 pub enum Message {
     SetPage(Page),
-    UpdateA(String),
-    UpdateB(String),
-    UpdateC(String),
+    UpdateCell1(String),
+    UpdateCell2(String),
+    UpdateCell3(String),
     Calculate
 }
 
@@ -15,5 +15,6 @@ pub enum Message {
 pub enum Page {
     #[default]
     Selection,
-    QuadraticEquations 
+    QuadraticEquations,
+    BasesConverter
 }

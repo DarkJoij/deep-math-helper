@@ -1,9 +1,10 @@
 [package]
 name = "deep-math-helper"
-version = "0.1.0"
+version = "0.2.0-alpha"
 edition = "2021"
 authors = ["DarkJoij"]
 description = "An application for performing mathematical calculations*."
 
 [dependencies]
-iced = "0.9"
+iced = "0.10"
+num_base = "0.4.2"

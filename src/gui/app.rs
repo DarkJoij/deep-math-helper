@@ -1,13 +1,19 @@
 use crate::gui::scenes::get_scene;
 use crate::gui::tools::{Message, Page, ShortElement};
-use crate::instruments::qe::QuadraticEquationsContainer;
-use crate::instruments::{DataStore, DisplayableResult};
+use crate::instruments::{Container, DataStore, DisplayableResult};
 
 use iced::executor::Default as DefaultExecutor;
 use iced::{Application, Command, Theme};
 
 pub struct DeepMathHelper {
     data: DataStore
+}
+
+impl DeepMathHelper {
+    fn set_defaults(&mut self) {
+        self.data.pending = DisplayableResult::None;
+        self.data.container = Container::default();
+    }
 }
 
 impl Application for DeepMathHelper {
@@ -24,33 +30,29 @@ impl Application for DeepMathHelper {
     }
 
     fn title(&self) -> String {
-        String::from("Deep Math Helper")
+        "Deep Math Helper".to_owned()
     }
 
     fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
         match message {
             Message::SetPage(page) => {
-                // Must be checked.
                 if let Page::Selection = page {
-                    self.data.pending = DisplayableResult::None;
-                    self.data.qe_container = QuadraticEquationsContainer::default();
+                    self.set_defaults();
                 }
-
+                
                 self.data.current_page = page;
             },
-            Message::UpdateA(a) => {
-                self.data.qe_container.a = a;
+            Message::UpdateCell1(value) => {
+                self.data.container.cell_1 = value;
             },
-            Message::UpdateB(b) => {
-                self.data.qe_container.b = b;
+            Message::UpdateCell2(value) => {
+                self.data.container.cell_2 = value;
             },
-            Message::UpdateC(c) => {
-                self.data.qe_container.c = c;
+            Message::UpdateCell3(value) => {
+                self.data.container.cell_3 = value;
             },
             Message::Calculate => {
-                if let Page::QuadraticEquations = self.data.current_page {
-                    self.data.pending = self.data.qe_container.calculate();
-                }
+                self.data.pending = self.data.container.calculate(&self.data)
             }
         };
 

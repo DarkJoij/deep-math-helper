@@ -1,24 +1,11 @@
-use crate::instruments::DisplayableResult;
+use super::{Container, DisplayableResult};
 
-#[derive(Default)]
-pub struct QuadraticEquationsContainer {
-    pub a: String,
-    pub b: String,
-    pub c: String
-}
-
-impl QuadraticEquationsContainer {
-    pub fn calculate(&self) -> DisplayableResult {
-        let mut coefficients: Vec<f32> = Vec::with_capacity(3);
-
-        for string in [&self.a, &self.b, &self.c] {
-            if let Ok(number) = string.parse::<f32>() {
-                coefficients.push(number);
-                continue;
-            }
-
-            return DisplayableResult::Text(format!("Invalid number got: '{}'.", string));
-        }
+impl Container {
+    pub fn found_results(&self) -> DisplayableResult {
+        let coefficients = match self.parse_in_vec::<f32>(self.cells()) {
+            Ok(vector) => vector,
+            Err(message) => return DisplayableResult::Text(message)
+        };
 
         let a = coefficients[0];
         let b = coefficients[1];
@@ -29,14 +16,14 @@ impl QuadraticEquationsContainer {
                 let x1 = (-b + number.sqrt()) / (2. * a);
                 let x2 = (-b - number.sqrt()) / (2. * a);
 
-                DisplayableResult::Double(x1, x2)
+                DisplayableResult::Double(x1.to_string(), x2.to_string())
             },
             Discriminant::Zero => {
                 let x = -b / (2. * a);
-                DisplayableResult::Single(x)
+                DisplayableResult::Single(x.to_string())
             },
             Discriminant::Negative => {
-                DisplayableResult::Text("This equation has no rational solutions.".to_owned())
+                DisplayableResult::Text("Данное уравнение не имеет рациональных решений.".to_owned())
             }
         }
     }

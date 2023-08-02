@@ -10,7 +10,7 @@ use iced::window::Settings as WindowSettings;
 fn main() -> Result<(), Error> {
     DeepMathHelper::run(IcedSettings {
         window: WindowSettings {
-            size: (500, 600),
+            size: (800, 600),
             ..WindowSettings::default()
         },
         ..IcedSettings::default()
