@@ -37,7 +37,7 @@ pub struct DirtySettings {
 }
 
 impl DirtySettings {
-    fn get_str_skip_serialization<'a>() -> &'a str {
+    fn get_str_skip_serialization() -> &'static str {
         "{\n  \"theme\": \"Light\"\n}"
     }
 }
