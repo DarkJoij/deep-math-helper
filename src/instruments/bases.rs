@@ -31,9 +31,9 @@ impl Container {
     }
 }
 
-fn check(bases: &Vec<usize>) -> Result<(), String> {
-    for base in bases {
-        if base < &2 || base > &36 { // Is this normal: [`&1`]?
+fn check(bases: &[usize]) -> Result<(), String> {
+    for &base in bases {
+        if base < 2 || base > 36 { // Is this normal: [`&1`]?
             return Err(format!("Некорректное основание системы счисления: '{}'.", base));
         }
     }
