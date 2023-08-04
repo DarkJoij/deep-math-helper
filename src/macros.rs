@@ -1,3 +1,5 @@
+/// May be will be replaced with [`if_ultimate_version`].
+#[allow(dead_code)]
 #[macro_export]
 macro_rules! if_debug {
     ($($body:tt)*) => {{

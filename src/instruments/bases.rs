@@ -22,7 +22,7 @@ impl Container {
             Ok(based) => displayable_ok!("Ответ: {}.", based.val),
             Err(_) => {
                 if_ultimate_version! {
-                    println!("Failed to evaluate `number.to(bases[1])`.");
+                    eprintln!("Failed to evaluate `number.to(bases[1])`.");
                 }
 
                 displayable_err!("Произошла неизвестная ошибка, пожалуйста, обратитесь к разработчику.")

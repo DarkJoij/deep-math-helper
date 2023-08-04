@@ -24,10 +24,8 @@ pub fn get_scene<'a>(data: &DataStore) -> ShortElement<'a> {
     // ... to here code must be refactored.
 
     let text_content = match &data.pending {
-        DisplayableResult::None => {
-            return main.push(current_page)
-                .into();
-        },
+        DisplayableResult::None => return main.push(current_page)
+            .into(),
         DisplayableResult::Error(message) => format!("Ошибка: {message}"),
         DisplayableResult::Success(result) => result.to_owned(),
     };

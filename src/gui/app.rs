@@ -45,7 +45,7 @@ impl Application for DeepMathHelper {
                     let message = "Failed to swith theme.";
                     
                     if_ultimate_version! {
-                        println!("{} {}.", message, error);
+                        eprintln!("{} {}.", message, error);
                     }
 
                     self.data.pending = displayable_ok!(message);

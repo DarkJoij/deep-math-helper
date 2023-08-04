@@ -1,7 +1,7 @@
 pub mod bases;
 pub mod qe;
 
-use crate::if_debug;
+use crate::if_ultimate_version;
 use crate::gui::tools::Page;
 use crate::settings::Settings;
 
@@ -21,7 +21,7 @@ impl Display for DisplayableResult {
         write!(f, "{}", match self {
             DisplayableResult::None => "None".to_owned(),
             DisplayableResult::Error(message) => message.to_owned(),
-            DisplayableResult::Success(result) => result.to_string(),
+            DisplayableResult::Success(result) => result.to_owned(),
         })
     }
 }
@@ -56,8 +56,8 @@ impl Container {
     pub fn calculate(&self, data: &DataStore) -> DisplayableResult {
         match data.current_page {
             Page::Selection => {
-                if_debug! {
-                    println!("Ignoring: It's start page, cannot return back.");
+                if_ultimate_version! {
+                    eprintln!("Ignoring: It's start page, cannot return back.");
                 }
 
                 DisplayableResult::None
