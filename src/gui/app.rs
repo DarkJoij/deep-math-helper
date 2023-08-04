@@ -42,7 +42,7 @@ impl Application for DeepMathHelper {
                 };
 
                 if let Err(error) = write_file(&self.data.settings) {
-                    let message = "Failed to swith theme.";
+                    let message = "Failed to switch theme.";
                     
                     if_ultimate_version! {
                         eprintln!("{} {}.", message, error);
