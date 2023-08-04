@@ -1,4 +1,4 @@
-use crate::if_ultimate_version;
+use crate::{displayable_ok, if_ultimate_version};
 use crate::gui::scenes::get_scene;
 use crate::gui::tools::{Message, Page, ShortElement};
 use crate::instruments::{Container, DataStore, DisplayableResult};
@@ -41,14 +41,14 @@ impl Application for DeepMathHelper {
                     Theme::Light 
                 };
 
-                if let Err(_) = write_file(&self.data.settings) {
+                if let Err(error) = write_file(&self.data.settings) {
                     let message = "Failed to swith theme.";
                     
                     if_ultimate_version! {
-                        println!("{} {}.", message, "See [`switch_theme()`]");
+                        println!("{} {}.", message, error);
                     }
 
-                    self.data.pending = DisplayableResult::Error(message.to_owned());
+                    self.data.pending = displayable_ok!(message);
                 }
             },
             Message::SetPage(page) => {

@@ -16,7 +16,7 @@ impl From<&DirtySettings> for Settings {
         use Theme::{Dark, Light};
 
         Settings { 
-            theme: if value.theme.as_str() == "Dark" { Dark } else { Light } 
+            theme: if value.theme.as_str() == "Light" { Light } else { Dark } 
         }
     }
 }
@@ -38,7 +38,7 @@ pub struct DirtySettings {
 
 impl DirtySettings {
     fn get_str_skip_serialization<'a>() -> &'a str {
-        "{\n    \"theme\": \"Light\"\n}"
+        "{\n  \"theme\": \"Light\"\n}"
     }
 }
 
