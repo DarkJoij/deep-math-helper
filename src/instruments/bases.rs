@@ -1,3 +1,4 @@
+use crate::{displayable_err, displayable_ok, if_ultimate_version};
 use super::{Container, DisplayableResult};
 
 use num_base::Based;
@@ -9,15 +10,33 @@ impl Container {
 
         let bases = match self.parse_in_vec::<usize>(cells) {
             Ok(vector) => vector,
-            Err(message) => return DisplayableResult::Text(message)
+            Err(message) => return displayable_err!(message)
         };
+        if let Err(message) = check(&bases) {
+            return displayable_err!(message);
+        } 
 
-        let converted = Based::new(&self.cell_1, bases[0])
-            .to(bases[1]);
+        let number = Based::new(&self.cell_1, bases[0]);
 
-        match converted {
-            Ok(based) => DisplayableResult::Single(based.val),
-            Err(_) => DisplayableResult::Text(format!("Не удалось обработать число: '{}'.", self.cell_1))
+        match number.to(bases[1]) {
+            Ok(based) => displayable_ok!("Ответ: {}.", based.val),
+            Err(_) => {
+                if_ultimate_version! {
+                    println!("Failed to evaluate `number.to(bases[1])`.");
+                }
+
+                displayable_err!("Произошла неизвестная ошибка, пожалуйста, обратитесь к разработчику.")
+            }
         }
     }
+}
+
+fn check(bases: &Vec<usize>) -> Result<(), String> {
+    for base in bases {
+        if base < &2 || base > &36 { // Is this normal: [`&1`]?
+            return Err(format!("Некорректное основание системы счисления: '{}'.", base));
+        }
+    }
+
+    Ok(())
 }

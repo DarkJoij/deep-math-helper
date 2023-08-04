@@ -1,6 +1,7 @@
 mod gui;
 mod instruments;
 mod macros;
+mod settings;
 
 use crate::gui::app::DeepMathHelper;
 

@@ -1,0 +1,5 @@
+{
+    "dbg": "cargo run",
+    "fnl": "cargo run --release",
+    "ult": "cargo run --features ultimate"
+}

@@ -3,6 +3,7 @@ pub mod qe;
 
 use crate::if_debug;
 use crate::gui::tools::Page;
+use crate::settings::Settings;
 
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
@@ -11,23 +12,21 @@ use std::str::FromStr;
 pub enum DisplayableResult {
     #[default]
     None,
-    Text(String),
-    Single(String),
-    Double(String, String)
+    Error(String),
+    Success(String),
 }
 
 impl Display for DisplayableResult {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         write!(f, "{}", match self {
             DisplayableResult::None => "None".to_owned(),
-            DisplayableResult::Text(string) => string.to_owned(),
-            DisplayableResult::Single(string) => string.to_string(),
-            DisplayableResult::Double(one, two) => format!("{}, {}", one, two)
+            DisplayableResult::Error(message) => message.to_owned(),
+            DisplayableResult::Success(result) => result.to_string(),
         })
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Default)]
 pub struct Container {
     pub cell_1: String,
     pub cell_2: String,
@@ -74,5 +73,6 @@ pub struct DataStore {
     pub query: String,
     pub current_page: Page,
     pub container: Container,
-    pub pending: DisplayableResult
+    pub pending: DisplayableResult,
+    pub settings: Settings
 }
