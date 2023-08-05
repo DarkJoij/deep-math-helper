@@ -1,5 +1,5 @@
-use crate::{displayable_err, displayable_ok, if_ultimate_version};
-use super::{Container, DisplayableResult};
+use crate::{displayable_err, displayable_ok, if_ultimate_version, res_err};
+use super::{Container, DisplayableResult, Res};
 
 use num_base::Based;
 
@@ -9,10 +9,10 @@ impl Container {
         cells.remove(0);
 
         let bases = match self.parse_in_vec::<usize>(cells) {
-            Ok(vector) => vector,
-            Err(message) => return displayable_err!(message)
+            Res::Ok(vector) => vector,
+            Res::Err(message) => return displayable_err!(message)
         };
-        if let Err(message) = check(&bases) {
+        if let Res::Err(message) = check(&bases) {
             return displayable_err!(message);
         } 
 
@@ -31,12 +31,12 @@ impl Container {
     }
 }
 
-fn check(bases: &[usize]) -> Result<(), String> {
+fn check(bases: &[usize]) -> Res<()> {
     for &base in bases {
         if base < 2 || base > 36 { // Is this normal: [`&1`]?
-            return Err(format!("Некорректное основание системы счисления: '{}'.", base));
+            return res_err!("Некорректное основание системы счисления: '{}'.", base);
         }
     }
 
-    Ok(())
+    Res::Ok(())
 }

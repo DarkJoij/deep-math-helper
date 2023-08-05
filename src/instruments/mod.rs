@@ -1,12 +1,17 @@
 pub mod bases;
 pub mod qe;
 
-use crate::if_ultimate_version;
+use crate::{if_ultimate_version, res_err};
 use crate::gui::tools::Page;
 use crate::settings::Settings;
 
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
+
+pub enum Res<T> {
+    Ok(T),
+    Err(String)
+}
 
 #[derive(Default)]
 pub enum DisplayableResult {
@@ -34,11 +39,11 @@ pub struct Container {
 }
 
 impl Container {
-    pub fn cells(&self) -> Vec<&str> {
+    fn cells(&self) -> Vec<&str> {
         vec![&self.cell_1, &self.cell_2, &self.cell_3]
     }
 
-    pub fn parse_in_vec<T: FromStr>(&self, cells: Vec<&str>) -> Result<Vec<T>, String> {
+    fn parse_in_vec<T: FromStr>(&self, cells: Vec<&str>) -> Res<Vec<T>> {
         let mut vector = Vec::with_capacity(cells.len());
 
         for literal in cells {
@@ -47,10 +52,10 @@ impl Container {
                 continue;
             }
 
-            return Err(format!("Введено некорректное число: '{}'.", literal));
+            return res_err!("Введено некорректное число: '{}'.", literal);
         }
 
-        Ok(vector)
+        Res::Ok(vector)
     }
 
     pub fn calculate(&self, data: &DataStore) -> DisplayableResult {

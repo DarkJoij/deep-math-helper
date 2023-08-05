@@ -4,7 +4,7 @@ use crate::gui::tools::{Message, Page, ShortElement};
 use crate::instruments::{Container, DataStore, DisplayableResult};
 use crate::settings::write_file;
 
-use iced::executor::Default as DefaultExecutor;
+use iced::executor::Default;
 use iced::{Application, Command, Theme};
 
 pub struct DeepMathHelper {
@@ -12,7 +12,7 @@ pub struct DeepMathHelper {
 }
 
 impl Application for DeepMathHelper {
-    type Executor = DefaultExecutor;
+    type Executor = Default;
     type Message = Message;
     type Theme = Theme;
     type Flags = ();
@@ -25,11 +25,11 @@ impl Application for DeepMathHelper {
     }
 
     fn title(&self) -> String {
-        if_ultimate_version! {
-            return "Deep Math Helper Ultimate Version".to_owned()
-        }
-
-        "Deep Math Helper".to_owned()
+        if_ultimate_version! {{ 
+            "Deep Math Helper Ultimate Version" .to_owned()
+        } else { 
+            "Deep Math Helper" .to_owned()
+        }}
     }
 
     fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
@@ -56,6 +56,7 @@ impl Application for DeepMathHelper {
                     self.data.pending = DisplayableResult::None;
                     self.data.container = Container::default();
                 }
+                
                 if_ultimate_version! { // Something like auto-completion???
                     if let Page::QuadraticEquations = page {
                         self.data.container.cell_3 = "0".to_owned(); 

@@ -1,15 +1,18 @@
 //! 32-bit floating-point numbers ([`f32`]), which are used for 
 //! all calculations in that module, can later be replaced with 
 //! 64-bit numbers ([`f64`]) to increase the accuracy of calculations.
+//! Currently [`f64`] is only used in the Ultimate ersion
 
 use crate::{displayable_err, displayable_ok};
-use super::{Container, DisplayableResult};
+use super::{Container, DisplayableResult, Res};
+
+type Number = f32; 
 
 impl Container {
     pub fn found_results(&self) -> DisplayableResult {
-        let coefficients = match self.parse_in_vec::<f32>(self.cells()) {
-            Ok(vector) => vector,
-            Err(message) => return displayable_err!(message)
+        let coefficients = match self.parse_in_vec::<Number>(self.cells()) {
+            Res::Ok(vector) => vector,
+            Res::Err(message) => return displayable_err!(message)
         };
 
         let a = coefficients[0];
@@ -35,13 +38,13 @@ impl Container {
 }
 
 enum Discriminant {
-    Positive(f32),
+    Positive(Number),
     Zero,
     Negative
 }
 
-impl From<f32> for Discriminant {
-    fn from(value: f32) -> Self {
+impl From<Number> for Discriminant {
+    fn from(value: Number) -> Self {
         if value.is_sign_positive() { Self::Positive(value) }
         else if value == 0. { Self::Zero } 
         else { Self::Negative }
