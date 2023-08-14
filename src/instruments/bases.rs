@@ -24,8 +24,8 @@ impl Container {
                 if_ultimate_version! {
                     eprintln!("Failed to evaluate `number.to(bases[1])`.");
                 }
-
-                displayable_err!("Произошла неизвестная ошибка, пожалуйста, обратитесь к разработчику.")
+                
+                displayable_err!("Произошла неизвестная ошибка с кодом UE1, пожалуйста, обратитесь к разработчику.")
             }
         }
     }

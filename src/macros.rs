@@ -55,6 +55,6 @@ macro_rules! displayable_err {
         crate::instruments::DisplayableResult::Error($val.to_owned())
     };
     ($($arg:tt)*) => {
-        crate::instruments::DisplayableResult::Error(format_args!($($arg)*))
+        crate::instruments::DisplayableResult::Error(format!($($arg)*))
     };
 }

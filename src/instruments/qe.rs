@@ -1,7 +1,6 @@
 //! 32-bit floating-point numbers ([`f32`]), which are used for 
 //! all calculations in that module, can later be replaced with 
 //! 64-bit numbers ([`f64`]) to increase the accuracy of calculations.
-//! Currently [`f64`] is only used in the Ultimate ersion
 
 use crate::{displayable_err, displayable_ok};
 use super::{Container, DisplayableResult, Res};
