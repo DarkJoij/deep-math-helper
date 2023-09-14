@@ -1,7 +1,8 @@
 pub mod bases;
 pub mod qe;
+pub mod trigonometry;
 
-use crate::{if_ultimate_version, res_err};
+use crate::res_err;
 use crate::gui::tools::Page;
 use crate::settings::Settings;
 
@@ -24,9 +25,9 @@ pub enum DisplayableResult {
 impl Display for DisplayableResult {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         write!(f, "{}", match self {
-            DisplayableResult::None => "None".to_owned(),
-            DisplayableResult::Error(message) => message.to_owned(),
-            DisplayableResult::Success(result) => result.to_owned(),
+            DisplayableResult::None => "None",
+            DisplayableResult::Error(message) => message,
+            DisplayableResult::Success(result) => result,
         })
     }
 }
@@ -35,18 +36,26 @@ impl Display for DisplayableResult {
 pub struct Container {
     pub cell_1: String,
     pub cell_2: String,
-    pub cell_3: String
+    pub cell_3: String,
+    pub cell_4: String
 }
 
 impl Container {
     fn cells(&self) -> Vec<&str> {
-        vec![&self.cell_1, &self.cell_2, &self.cell_3]
+        vec![&self.cell_1, &self.cell_2, &self.cell_3, &self.cell_4]
     }
 
-    fn parse_in_vec<T: FromStr>(&self, cells: Vec<&str>) -> Res<Vec<T>> {
-        let mut vector = Vec::with_capacity(cells.len());
+    fn parse_in_vec_to<T: FromStr>(&self, to: usize) -> Res<Vec<T>> {
+        self.parse_in_vec_sliced(0, to)
+    }
 
-        for literal in cells {
+    fn parse_in_vec_sliced<T: FromStr>(&self, from: usize, to: usize) -> Res<Vec<T>> {
+        let cells = self.cells();
+        let mut vector = Vec::with_capacity(to);
+
+        for index in from..to {
+            let literal = cells[index];
+
             if let Ok(number) = literal.parse::<T>() {
                 vector.push(number);
                 continue;
@@ -60,15 +69,10 @@ impl Container {
 
     pub fn calculate(&self, data: &DataStore) -> DisplayableResult {
         match data.current_page {
-            Page::Selection => {
-                if_ultimate_version! {
-                    eprintln!("Ignoring: It's start page, cannot return back.");
-                }
-
-                DisplayableResult::None
-            },
+            Page::Selection => DisplayableResult::None,
             Page::QuadraticEquations => self.found_results(),
-            Page::BasesConverter => self.convert()
+            Page::BasesConverter => self.convert(),
+            Page::Trigonometry => self.evaluate()
         }
     }
 }
@@ -78,6 +82,6 @@ pub struct DataStore {
     pub query: String,
     pub current_page: Page,
     pub container: Container,
-    pub pending: DisplayableResult,
+    pub pending: Vec<DisplayableResult>,
     pub settings: Settings
 }

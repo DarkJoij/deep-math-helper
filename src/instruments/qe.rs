@@ -9,7 +9,7 @@ type Number = f32;
 
 impl Container {
     pub fn found_results(&self) -> DisplayableResult {
-        let coefficients = match self.parse_in_vec::<Number>(self.cells()) {
+        let coefficients = match self.parse_in_vec_to::<Number>(3) {
             Res::Ok(vector) => vector,
             Res::Err(message) => return displayable_err!(message)
         };
@@ -20,8 +20,8 @@ impl Container {
 
         match Discriminant::from(b.powf(2.) - 4. * a * c) {
             Discriminant::Positive(number) => {
-                let x1 = (-b + number.sqrt()) / (2. * a);
-                let x2 = (-b - number.sqrt()) / (2. * a);
+                let x1 = (-b + number.sqrt()) / 2. / a;
+                let x2 = (-b - number.sqrt()) / 2. / a;
 
                 displayable_ok!("Ответ: x\u{2081} = {}; x\u{2082} = {}.", x1, x2)
             },

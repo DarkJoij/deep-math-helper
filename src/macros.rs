@@ -1,15 +1,3 @@
-/// May be will be replaced with [`if_ultimate_version`].
-#[allow(dead_code)]
-#[macro_export]
-macro_rules! if_debug {
-    ($($body:tt)*) => {{
-        #[cfg(debug_assertions)]
-        {
-            $($body)*
-        }
-    }};
-}
-
 #[macro_export]
 macro_rules! if_ultimate_version {
     ($ultimate_block:block else $else_block:block) => {{
@@ -56,5 +44,14 @@ macro_rules! displayable_err {
     };
     ($($arg:tt)*) => {
         crate::instruments::DisplayableResult::Error(format!($($arg)*))
+    };
+}
+
+/// Untyped macro invoke.
+#[warn(unstable_features)]
+#[macro_export]
+macro_rules! switcher {
+    ($val_1:expr, $val_2:expr) => {
+        crate::gui::tools::Switcher::new($val_1, $val_2)
     };
 }

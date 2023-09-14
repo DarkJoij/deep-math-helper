@@ -1,6 +1,6 @@
 [package]
 name = "deep-math-helper"
-version = "0.23.1408-alpha"
+version = "0.23.914-alpha"
 edition = "2021"
 authors = ["DarkJoij"]
 description = "An application for performing mathematical calculations*."
@@ -8,8 +8,8 @@ description = "An application for performing mathematical calculations*."
 [dependencies]
 iced = "0.10"
 num_base = "0.4.2"
-serde = { version = "1.0.180", features = ["derive"] }
-serde_json = "1.0.104"
+serde = { version = "1.0.188", features = ["derive"] }
+serde_json = "1.0.107"
 
 [features]
 default = []

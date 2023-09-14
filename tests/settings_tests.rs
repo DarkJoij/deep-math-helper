@@ -15,12 +15,12 @@ fn settings_structures_test() {
 fn io_functions_test() {
     let mut settings = match read_file() {
         Ok(dirty) => dirty,
-        Err(_) => panic!("failed to read settings file.")
+        _ => panic!("failed to read settings file.")
     };
 
     settings.theme = Theme::Dark;
     match write_file(&settings) {
         Ok(result) => assert_eq!(result, ()),
-        Err(_) => panic!("failed to write into settings file.")
+        _ => panic!("failed to write into settings file.")
     }
 }

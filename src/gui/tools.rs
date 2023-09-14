@@ -9,6 +9,7 @@ pub enum Message {
     UpdateCell1(String),
     UpdateCell2(String),
     UpdateCell3(String),
+    UpdateCell4(String),
     Calculate
 }
 
@@ -17,5 +18,6 @@ pub enum Page {
     #[default]
     Selection,
     QuadraticEquations,
-    BasesConverter
+    BasesConverter,
+    Trigonometry
 }

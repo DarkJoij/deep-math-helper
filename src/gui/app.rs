@@ -1,4 +1,4 @@
-use crate::{displayable_ok, if_ultimate_version};
+use crate::{displayable_err, if_ultimate_version};
 use crate::gui::scenes::get_scene;
 use crate::gui::tools::{Message, Page, ShortElement};
 use crate::instruments::{Container, DataStore, DisplayableResult};
@@ -26,42 +26,38 @@ impl Application for DeepMathHelper {
 
     fn title(&self) -> String {
         if_ultimate_version! {{ 
-            "Deep Math Helper Ultimate Version" .to_owned()
+            "Deep Math Helper Ultimate Version".to_owned()
         } else { 
-            "Deep Math Helper" .to_owned()
+            "Deep Math Helper".to_owned()
         }}
     }
 
     fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
         match message {
             Message::SwitchTheme => {
-                self.data.settings.theme = if self.data.settings.theme == Theme::Light { 
-                    Theme::Dark 
-                } else { 
-                    Theme::Light 
-                };
+                self.data.settings.theme.switch();
 
                 if let Err(error) = write_file(&self.data.settings) {
                     let message = "Failed to switch theme.";
                     
                     if_ultimate_version! {
-                        eprintln!("{} {}.", message, error);
+                        eprintln!("{} {error}", &message);
                     }
 
-                    self.data.pending = displayable_ok!(message);
+                    self.data.pending.push(displayable_err!(message));
                 }
             },
             Message::SetPage(page) => {
                 if let Page::Selection = page {
-                    self.data.pending = DisplayableResult::None;
+                    self.data.pending.clear();
                     self.data.container = Container::default();
                 }
                 
                 if_ultimate_version! { // Something like auto-completion???
                     if let Page::QuadraticEquations = page {
                         self.data.container.cell_3 = "0".to_owned(); 
-                    }
-                    if let Page::BasesConverter = page {
+                    } 
+                    else if let Page::BasesConverter = page {
                         self.data.container.cell_2 = "10".to_owned(); 
                     }
                 }
@@ -77,8 +73,18 @@ impl Application for DeepMathHelper {
             Message::UpdateCell3(cell_3) => {
                 self.data.container.cell_3 = cell_3;
             },
+            Message::UpdateCell4(cell_4) => {
+                self.data.container.cell_4 = cell_4;
+            },
             Message::Calculate => {
-                self.data.pending = self.data.container.calculate(&self.data)
+                let result = self.data.container.calculate(&self.data);
+
+                // This is weird mechanism.
+                if let DisplayableResult::Success(..) = result {
+                    self.data.pending.clear();
+                }
+
+                self.data.pending.push(result);
             }
         };
 
@@ -90,6 +96,6 @@ impl Application for DeepMathHelper {
     }
     
     fn theme(&self) -> Self::Theme {
-        self.data.settings.theme.clone()
+        self.data.settings.theme.get()  
     }
 }
