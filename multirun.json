@@ -1,5 +1,5 @@
 {
-  "dbg": "cargo run",
-  "fnl": "cargo run --release",
-  "ult": "cargo run --features ultimate"
+  "dbg": "cargo r",
+  "fnl": "cargo r --release",
+  "ult": "cargo r --features ultimate"
 }

@@ -36,7 +36,7 @@ pub fn get_scene<'a>(data: &'a DataStore) -> ShortElement<'a> {
             DisplayableResult::Success(result) => result.to_owned(),
         };
 
-        main = main.push(get_default_text(content)); // FIXME: Must be dropped?!?
+        main = main.push(get_default_text(content));
     }
 
     main.into()
@@ -84,9 +84,8 @@ fn get_trigonometry_pages<'a>(data: &DataStore) -> Column<'a, Message> {
 
     let text = get_default_text("Тригонометрические функции:".to_owned());
 
-    let functions = get_default_column()
-        /*Column::new() // Must be without padding.
-        .align_items(Alignment::Center) */
+    let functions = Column::new() // Must be without padding.
+        .align_items(Alignment::Center)
         .push(get_default_text_input("sin", field_1, Message::UpdateCell1))
         .push(get_default_text_input("cos", field_2, Message::UpdateCell3))
         .push(get_default_text_input("tan", field_3, Message::UpdateCell3))
