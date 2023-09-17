@@ -10,6 +10,8 @@ pub enum Message {
     UpdateCell2(String),
     UpdateCell3(String),
     UpdateCell4(String),
+    SwitchTrigonometricPart,
+    SwitchTrigonometricUnit,
     Calculate
 }
 

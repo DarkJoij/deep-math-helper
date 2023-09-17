@@ -4,6 +4,7 @@ pub mod trigonometry;
 
 use crate::res_err;
 use crate::gui::tools::Page;
+use crate::helpers::{Part, Unit};
 use crate::settings::Settings;
 
 use std::fmt::{Display, Formatter, Result as FmtResult};
@@ -14,12 +15,22 @@ pub enum Res<T> {
     Err(String)
 }
 
-#[derive(Default)]
+#[derive(Default, Debug, PartialEq)]
 pub enum DisplayableResult {
     #[default]
     None,
     Error(String),
     Success(String),
+}
+
+impl DisplayableResult {
+    pub fn is_success(&self) -> bool {
+        if let Self::Success(..) = self {
+            return true
+        }
+
+        false
+    }
 }
 
 impl Display for DisplayableResult {
@@ -37,7 +48,10 @@ pub struct Container {
     pub cell_1: String,
     pub cell_2: String,
     pub cell_3: String,
-    pub cell_4: String
+    pub cell_4: String,
+    pub part: Part,
+    pub unit: Unit,
+    pub pending: Vec<DisplayableResult>
 }
 
 impl Container {
@@ -49,6 +63,7 @@ impl Container {
         self.parse_in_vec_sliced(0, to)
     }
 
+    #[allow(clippy::needless_range_loop)]
     fn parse_in_vec_sliced<T: FromStr>(&self, from: usize, to: usize) -> Res<Vec<T>> {
         let cells = self.cells();
         let mut vector = Vec::with_capacity(to);
@@ -67,12 +82,18 @@ impl Container {
         Res::Ok(vector)
     }
 
-    pub fn calculate(&self, data: &DataStore) -> DisplayableResult {
-        match data.current_page {
+    pub fn calculate(&mut self, current_page: &Page) -> DisplayableResult {
+        match current_page {
             Page::Selection => DisplayableResult::None,
             Page::QuadraticEquations => self.found_results(),
             Page::BasesConverter => self.convert(),
-            Page::Trigonometry => self.evaluate()
+            Page::Trigonometry => {
+                for result in self.evaluate() {
+                    self.pending.push(result);
+                }
+
+                DisplayableResult::None
+            }
         }
     }
 }
@@ -82,6 +103,5 @@ pub struct DataStore {
     pub query: String,
     pub current_page: Page,
     pub container: Container,
-    pub pending: Vec<DisplayableResult>,
     pub settings: Settings
 }

@@ -1,12 +1,12 @@
 use crate::gui::defaults::*;
 use crate::gui::tools::{Message, Page, ShortElement};
 use crate::instruments::{DataStore, DisplayableResult};
-use crate::settings::ThemeStrings;
+use crate::helpers::{AsStr, Part, ThemeStrings};
 
 use iced::Alignment;
 use iced::widget::{Button, Column};
 
-pub fn get_scene<'a>(data: &'a DataStore) -> ShortElement<'a> {
+pub fn get_scene(data: &DataStore) -> ShortElement {
     let mut main = get_default_column();
     let mut current_page = match data.current_page {
         Page::Selection => get_selection_page(),
@@ -25,11 +25,11 @@ pub fn get_scene<'a>(data: &'a DataStore) -> ShortElement<'a> {
     // ... to here code must be refactored.
     main = main.push(current_page);
 
-    if data.pending.len() == 0 {
+    if data.container.pending.is_empty() {
         return main.into()
     }
 
-    for part in &data.pending {
+    for part in &data.container.pending {
         let content = match part {
             DisplayableResult::None => continue,
             DisplayableResult::Error(message) => format!("Ошибка: {message}"),
@@ -76,26 +76,6 @@ fn get_quadratic_equations_page<'a>(data: &DataStore) -> Column<'a, Message> {
         .push(coefficients)
 }
 
-fn get_trigonometry_pages<'a>(data: &DataStore) -> Column<'a, Message> {
-    let field_1 = &data.container.cell_1;
-    let field_2 = &data.container.cell_2;
-    let field_3 = &data.container.cell_3;
-    let field_4 = &data.container.cell_4;
-
-    let text = get_default_text("Тригонометрические функции:".to_owned());
-
-    let functions = Column::new() // Must be without padding.
-        .align_items(Alignment::Center)
-        .push(get_default_text_input("sin", field_1, Message::UpdateCell1))
-        .push(get_default_text_input("cos", field_2, Message::UpdateCell3))
-        .push(get_default_text_input("tan", field_3, Message::UpdateCell3))
-        .push(get_default_text_input("cot", field_4, Message::UpdateCell4));
-
-    get_default_column()
-        .push(text)
-        .push(functions)
-}
-
 fn get_bases_converter_page<'a>(data: &DataStore) -> Column<'a, Message> {
     let number_literal = &data.container.cell_1;
     let from_base = &data.container.cell_2;
@@ -110,7 +90,52 @@ fn get_bases_converter_page<'a>(data: &DataStore) -> Column<'a, Message> {
         .push(number_and_bases)
 }
 
-fn get_theme_button<'a>(data: &'a DataStore) -> Button<'a, Message> {
+fn get_trigonometry_pages(data: &DataStore) -> Column<Message> {
+    let part = data.container.part.as_str();
+    let unit = data.container.unit.as_str();
+    let literals = [
+        "sin", "cos", "tan", "cot"
+    ];
+    let fields = [
+        &data.container.cell_1, &data.container.cell_2,
+        &data.container.cell_3, &data.container.cell_4
+    ];
+    let messages = [
+        Message::UpdateCell1, Message::UpdateCell2,
+        Message::UpdateCell3, Message::UpdateCell4
+    ];
+
+    let title = get_default_text("Тригонометрические функции:".to_owned());
+
+    let switchers = get_default_row()
+        .push(Button::new(part)
+            .on_press(Message::SwitchTrigonometricPart))
+        .push(Button::new(unit)
+            .on_press(Message::SwitchTrigonometricUnit));
+
+    let mut functions = Column::new()
+        .align_items(Alignment::Center);
+
+    for index in 0..4 {
+        let mut literal = String::new();
+        let field = fields[index];
+        let message = messages[index];
+
+        if let Part::ArcFunctions = data.container.part {
+            literal.push('a');
+        }
+
+        literal.push_str(literals[index]);
+        functions = functions.push(get_default_text_input(&literal, field, message));
+    }
+
+    get_default_column()
+        .push(switchers)
+        .push(title)
+        .push(functions)
+}
+
+fn get_theme_button(data: &DataStore) -> Button<Message> {
     Button::new(data.settings.theme.display_name())
         .on_press(Message::SwitchTheme)
 }

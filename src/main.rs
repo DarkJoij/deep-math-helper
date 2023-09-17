@@ -1,5 +1,6 @@
 mod gui;
 mod instruments;
+mod helpers;
 mod macros;
 mod settings;
 

@@ -2,6 +2,7 @@ use crate::{displayable_err, if_ultimate_version};
 use crate::gui::scenes::get_scene;
 use crate::gui::tools::{Message, Page, ShortElement};
 use crate::instruments::{Container, DataStore, DisplayableResult};
+use crate::helpers::PseudoIterator;
 use crate::settings::write_file;
 
 use iced::executor::Default;
@@ -33,6 +34,8 @@ impl Application for DeepMathHelper {
     }
 
     fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
+        let none = Command::none();
+
         match message {
             Message::SwitchTheme => {
                 self.data.settings.theme.switch();
@@ -44,12 +47,12 @@ impl Application for DeepMathHelper {
                         eprintln!("{} {error}", &message);
                     }
 
-                    self.data.pending.push(displayable_err!(message));
+                    self.data.container.pending.push(displayable_err!(message));
                 }
             },
             Message::SetPage(page) => {
                 if let Page::Selection = page {
-                    self.data.pending.clear();
+                    self.data.container.pending.clear();
                     self.data.container = Container::default();
                 }
                 
@@ -76,19 +79,27 @@ impl Application for DeepMathHelper {
             Message::UpdateCell4(cell_4) => {
                 self.data.container.cell_4 = cell_4;
             },
+            Message::SwitchTrigonometricPart => {
+                self.data.container.part = self.data.container.part.next();
+            },
+            Message::SwitchTrigonometricUnit => {
+                self.data.container.unit = self.data.container.unit.next();
+            },
             Message::Calculate => {
-                let result = self.data.container.calculate(&self.data);
+                let result = self.data.container.calculate(&self.data.current_page);
 
-                // This is weird mechanism.
-                if let DisplayableResult::Success(..) = result {
-                    self.data.pending.clear();
+                if result.is_success() || self.data.container.pending.len() >= 10 {
+                    self.data.container.pending.clear();
+                }
+                else if let DisplayableResult::None = result {
+                    return none;
                 }
 
-                self.data.pending.push(result);
+                self.data.container.pending.push(result);
             }
         };
 
-        Command::none()
+        none
     }
 
     fn view(&self) -> ShortElement<'_> {

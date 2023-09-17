@@ -1,65 +1,13 @@
+use crate::helpers::{Switcher, ThemeStrings};
+
 use iced::Theme;
 use serde::{Deserialize, Serialize};
 use serde_json::{Error as SerdeError, from_str, to_string_pretty};
 
-use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::fs::{File, read_to_string, write};
 use std::io::Write;
 
 const SETTINGS_FILE_NAME: &str = "settings.json";
-
-pub struct Switcher<T: Clone> {
-    one: T,
-    two: T,
-    what: bool
-}
-
-impl<T: Clone> Switcher<T> {
-    pub fn new(one: T, two: T) -> Self {
-        Switcher { one, two, what: true }
-    }
-
-    pub fn get(&self) -> T {
-        match self.what {
-            true => self.one.clone(),
-            false => self.two.clone()
-        }
-    }
-
-    pub fn switch(&mut self) -> T {
-        self.what = !self.what;
-        self.get()
-    }
-}
-
-impl<T: Clone + Debug> Debug for Switcher<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        let current = self.get();
-        current.fmt(f)
-    }
-}
-
-impl<T: Clone + Display> Display for Switcher<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        let current = self.get();
-        current.fmt(f)
-    }
-}
-
-pub trait ThemeStrings {
-    fn sys_name(&self) -> &str;
-    fn display_name(&self) -> &str;
-}
-
-impl ThemeStrings for Switcher<Theme> {
-    fn sys_name(&self) -> &str {
-        if self.get() == Theme::Light { "Light" } else { "Dark" }
-    }
-
-    fn display_name(&self) -> &str {
-        if self.get() == Theme::Light { "Тема: Светлая" } else { "Тема: Тёмная" }
-    }
-}
 
 pub struct Settings {
     pub theme: Switcher<Theme>
@@ -89,11 +37,10 @@ impl From<&DirtySettings> for Settings {
 
 impl Default for Settings {
     fn default() -> Self {
-        if let Ok(settings) = read_file() { 
-            settings 
-        } else {
-            Self::from(&DirtySettings::default())
-        }  
+        match read_file() {
+            Ok(settings) => settings,
+            _ => Self::from(&DirtySettings::default())
+        }
     }
 }
 

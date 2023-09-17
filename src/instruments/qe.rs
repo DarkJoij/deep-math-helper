@@ -5,11 +5,11 @@
 use crate::{displayable_err, displayable_ok};
 use super::{Container, DisplayableResult, Res};
 
-type Number = f32; 
+pub type QEFloatNumber = f32; 
 
 impl Container {
     pub fn found_results(&self) -> DisplayableResult {
-        let coefficients = match self.parse_in_vec_to::<Number>(3) {
+        let coefficients = match self.parse_in_vec_to::<QEFloatNumber>(3) {
             Res::Ok(vector) => vector,
             Res::Err(message) => return displayable_err!(message)
         };
@@ -37,13 +37,13 @@ impl Container {
 }
 
 enum Discriminant {
-    Positive(Number),
+    Positive(QEFloatNumber),
     Zero,
     Negative
 }
 
-impl From<Number> for Discriminant {
-    fn from(value: Number) -> Self {
+impl From<QEFloatNumber> for Discriminant {
+    fn from(value: QEFloatNumber) -> Self {
         if value.is_sign_positive() { Self::Positive(value) }
         else if value == 0. { Self::Zero } 
         else { Self::Negative }

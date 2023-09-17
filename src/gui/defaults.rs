@@ -12,12 +12,19 @@ pub fn get_default_row<'a>() -> Row<'a, Message> {
 pub fn get_default_column<'a>() -> Column<'a, Message> {
     Column::new()
         .align_items(Alignment::Center)
-        .padding(Padding::new(35.))
+        .padding(Padding::new(35f32))
 }
 
-pub fn get_default_button<'a>(content: &'a str, message: Message) -> Button<'a, Message> {
+pub fn get_default_button(content: &str, message: Message) -> Button<Message> {
     Button::new(content)
         .on_press(message)
+        .width(Length::Fill)
+}
+
+pub fn get_default_text<'a>(content: String) -> Text<'a> {
+    Text::new(content)
+        .horizontal_alignment(Horizontal::Center)
+        .vertical_alignment(Vertical::Center)
         .width(Length::Fill)
 }
 
@@ -26,14 +33,7 @@ where
     M: 'a + Fn(String) -> Message
 {
     TextInput::new(placeholder, value)
-        .padding(5)
+        .padding(5u16)
         .on_input(message)
         .width(Length::Fill)        
-}
-
-pub fn get_default_text<'a>(content: String) -> Text<'a> {
-    Text::new(content)
-        .horizontal_alignment(Horizontal::Center)
-        .vertical_alignment(Vertical::Center)
-        .width(Length::Fill)
 }
