@@ -2,16 +2,14 @@ use std::fmt::{Debug, Display, Formatter, Result};
 
 use iced::Theme;
 
-// [`Clone`] needed for [`Switcher`].
-#[derive(Copy, Clone, Default, PartialEq)]
+#[derive(Copy, Default, PartialEq)]
 pub enum Part {
     #[default]
     Fundamental,
     ArcFunctions
 }
 
-// [`Clone`] needed for [`Switcher`].
-#[derive(Copy, Clone, Default, PartialEq)]
+#[derive(Copy, Default, PartialEq)]
 pub enum Unit {
     #[default]
     Radians,
