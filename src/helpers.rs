@@ -2,14 +2,14 @@ use std::fmt::{Debug, Display, Formatter, Result};
 
 use iced::Theme;
 
-#[derive(Copy, Default, PartialEq)]
+#[derive(Clone, Copy, Default, PartialEq)]
 pub enum Part {
     #[default]
     Fundamental,
     ArcFunctions
 }
 
-#[derive(Copy, Default, PartialEq)]
+#[derive(Clone, Copy, Default, PartialEq)]
 pub enum Unit {
     #[default]
     Radians,
