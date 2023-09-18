@@ -1,7 +1,7 @@
 use crate::gui::defaults::*;
 use crate::gui::tools::{Message, Page, ShortElement};
 use crate::instruments::{DataStore, DisplayableResult};
-use crate::helpers::{AsStr, Part, ThemeStrings};
+use crate::helpers::{Part, DisplayNames};
 
 use iced::Alignment;
 use iced::widget::{Button, Column};
@@ -14,15 +14,14 @@ pub fn get_scene(data: &DataStore) -> ShortElement {
         Page::BasesConverter => get_bases_converter_page(data),
         Page::Trigonometry => get_trigonometry_pages(data)
     };
-    
-    // From here...
-    if data.current_page != Page::Selection {
+
+    if data.current_page != Page::Selection { // From here...
         current_page = current_page.push(get_calc_button())
             .push(get_back_button());
     } else {
         main = main.push(get_theme_button(data));
-    }
-    // ... to here code must be refactored.
+    } // ... to here code must be refactored.
+
     main = main.push(current_page);
 
     if data.container.pending.is_empty() {
@@ -91,8 +90,8 @@ fn get_bases_converter_page<'a>(data: &DataStore) -> Column<'a, Message> {
 }
 
 fn get_trigonometry_pages(data: &DataStore) -> Column<Message> {
-    let part = data.container.part.as_str();
-    let unit = data.container.unit.as_str();
+    let part = data.container.part.display_name();
+    let unit = data.container.unit.display_name();
     let literals = [
         "sin", "cos", "tan", "cot"
     ];

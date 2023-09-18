@@ -1,4 +1,4 @@
-use crate::helpers::{Switcher, ThemeStrings};
+use crate::helpers::{Switcher, DisplayNames};
 
 use iced::Theme;
 use serde::{Deserialize, Serialize};

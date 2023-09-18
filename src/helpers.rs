@@ -65,28 +65,6 @@ impl PseudoIterator for Unit {
     }
 }
 
-pub trait AsStr {
-    fn as_str(&self) -> &str;
-}
-
-impl AsStr for Part {
-    fn as_str(&self) -> &str {
-        match self {
-            Part::Fundamental => "Фундаментальные",
-            Part::ArcFunctions => "Обратные функции"
-        }
-    }
-}
-
-impl AsStr for Unit {
-    fn as_str(&self) -> &str {
-        match self {
-            Unit::Radians => "Радианы",
-            Unit::Degrees => "Градусы"
-        }
-    }
-}
-
 pub struct Switcher<T: Clone> {
     one: T,
     two: T,
@@ -125,12 +103,35 @@ impl<T: Clone + Display> Display for Switcher<T> {
     }
 }
 
-pub trait ThemeStrings {
-    fn sys_name(&self) -> &str;
-    fn display_name(&self) -> &str;
+pub trait DisplayNames {
+    fn sys_name(&self) -> &str {
+        unimplemented!()
+    }
+
+    fn display_name(&self) -> &str {
+        unimplemented!()
+    }
 }
 
-impl ThemeStrings for Switcher<Theme> {
+impl DisplayNames for Part {
+    fn display_name(&self) -> &str {
+        match self {
+            Part::Fundamental => "Фундаментальные",
+            Part::ArcFunctions => "Обратные функции"
+        }
+    }
+}
+
+impl DisplayNames for Unit {
+    fn display_name(&self) -> &str {
+        match self {
+            Unit::Radians => "Радианы",
+            Unit::Degrees => "Градусы"
+        }
+    }
+}
+
+impl DisplayNames for Switcher<Theme> {
     fn sys_name(&self) -> &str {
         if self.get() == Theme::Light { "Light" } else { "Dark" }
     }
