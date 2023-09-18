@@ -1,6 +1,6 @@
 use crate::instruments::{DisplayableResult, Part, Unit};
 
-use crate::{displayable_err, displayable_ok};
+use crate::{displayable_err, displayable_ok, res_err};
 use super::{Container, Res};
 
 use std::f64::consts::PI; // Must be replaced with [`FloatConst::PI()`].
@@ -29,7 +29,7 @@ impl Container {
                 let func = &funcs[index];
                 let result = self.exec_func(&value, func);
 
-                results.push(displayable_ok!("{}({}) = {}", func, value, result));
+                results.push(displayable_ok!("{func}({value}) = {}", TryRound(result)));
             }
         }
 
@@ -64,8 +64,7 @@ impl TrigonometryValue {
     pub fn from(literal: &str, unit: Unit) -> Res<Self> {
         let number = match literal.parse::<TFloatNumber>() {
             Ok(number) => number,
-            // FIXME: Optimize me:
-            _ => return Res::Err(format!("Введено некорректное число: '{}'.", &literal))
+            _ => return res_err!("Введено некорректное число: '{}'.", &literal)
         };
 
         Res::Ok(match unit {
@@ -123,5 +122,19 @@ impl Display for Function {
             ATan => "atan",
             ACot => "acot"
         })
+    }
+}
+
+struct TryRound(TFloatNumber);
+
+impl Display for TryRound {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        let rounded_string = format!("{:.6}", self.0);
+        let rounded = match rounded_string.parse::<TFloatNumber>() {
+            Ok(number) => number,
+            _ => return write!(f, "{}", self.0)
+        };
+
+        write!(f, "{}", if (self.0 - rounded).abs() < 0.000001 { rounded } else { self.0 })
     }
 }

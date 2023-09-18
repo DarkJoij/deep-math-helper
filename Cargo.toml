@@ -1,6 +1,6 @@
 [package]
 name = "deep-math-helper"
-version = "0.23.917-alpha"
+version = "0.23.918-alpha"
 edition = "2021"
 authors = ["DarkJoij"]
 description = "An application for performing mathematical calculations*."

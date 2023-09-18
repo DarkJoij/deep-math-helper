@@ -33,7 +33,7 @@ impl PseudoIterator for Part {
         for (index, part) in parts_iter.enumerate() {
             if self == part {
                 return match parts.get(index + 1) {
-                    None => Self::Fundamental,
+                    None => break,
                     Some(part) => *part
                 };
             }
@@ -55,7 +55,7 @@ impl PseudoIterator for Unit {
         for (index, part) in parts_iter.enumerate() {
             if self == part {
                 return match parts.get(index + 1) {
-                    None => Self::Radians,
+                    None => break,
                     Some(unit) => *unit
                 };
             }
