@@ -54,8 +54,7 @@ impl Application for DeepMathHelper {
         match message {
             Message::SwitchTheme => {
                 self.data.settings.theme.switch();
-
-
+                self.write_settings();
             },
             Message::SetPage(page) => {
                 if let Page::Selection = page {
