@@ -1,3 +1,4 @@
+use crate::gui::auth::MasterKey;
 use crate::helpers::{Switcher, DisplayNames};
 
 use iced::Theme;
@@ -10,7 +11,8 @@ use std::io::Write;
 const SETTINGS_FILE_NAME: &str = "settings.json";
 
 pub struct Settings {
-    pub theme: Switcher<Theme>
+    pub theme: Switcher<Theme>,
+    pub master_key: MasterKey
 }
 
 impl Settings {
@@ -18,7 +20,8 @@ impl Settings {
         let sys_theme_name = self.theme.sys_name();
 
         DirtySettings { 
-            theme: sys_theme_name.to_owned()
+            theme: sys_theme_name.to_owned(),
+            master_key: self.master_key.clone()
         }
     }
 }
@@ -31,7 +34,10 @@ impl From<&DirtySettings> for Settings {
             theme.switch();
         }
 
-        Settings { theme }
+        Settings {
+            theme,
+            master_key: value.master_key.clone()
+        }
     }
 }
 
@@ -46,19 +52,23 @@ impl Default for Settings {
 
 #[derive(Deserialize, Serialize)]
 pub struct DirtySettings {
-    pub theme: String
+    pub theme: String,
+    pub master_key: String
 }
 
 impl DirtySettings {
     #[warn(unstable_features)]
     fn get_str_skip_serialization() -> &'static str {
-        "{\n  \"theme\": \"Light\"\n}"
+        "{\n  \"theme\": \"Light\",\n  \"master_key\": \"unregistered\"\n}"
     }
 }
 
 impl Default for DirtySettings {
     fn default() -> Self {
-        DirtySettings { theme: "Light".to_owned() }
+        DirtySettings {
+            theme: "Light".to_owned(),
+            master_key: "unregistered".to_owned()
+        }
     }
 }
 
@@ -77,11 +87,14 @@ fn try_create_file() -> String {
 pub fn read_file() -> Result<Settings, SerdeError> {
     let content = match read_to_string(SETTINGS_FILE_NAME) {
         Ok(content) => content,
-        Err(_) => try_create_file()
+        _ => try_create_file()
     };
 
     let dirty: DirtySettings = from_str(&content)?;
-    Ok(Settings::from(&dirty))
+    let settings = Settings::from(&dirty);
+
+    drop(dirty); // TODO: Must be checked!
+    Ok(settings)
 }
 
 #[allow(unused_must_use)] // FIXME.

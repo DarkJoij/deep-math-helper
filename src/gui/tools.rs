@@ -12,7 +12,8 @@ pub enum Message {
     UpdateCell4(String),
     SwitchTrigonometricPart,
     SwitchTrigonometricUnit,
-    Calculate
+    Calculate,
+    CheckAuth
 }
 
 #[derive(Clone, Debug, Default, PartialEq)]

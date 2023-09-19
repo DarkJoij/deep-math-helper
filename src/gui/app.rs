@@ -1,15 +1,27 @@
 use crate::{displayable_err, if_ultimate_version};
-use crate::gui::scenes::get_scene;
-use crate::gui::tools::{Message, Page, ShortElement};
 use crate::instruments::{Container, DataStore, DisplayableResult};
 use crate::helpers::PseudoIterator;
 use crate::settings::write_file;
+use super::auth::Authorization;
+use super::scenes::get_scene;
+use super::tools::{Message, Page, ShortElement};
 
 use iced::executor::Default;
 use iced::{Application, Command, Theme};
 
 pub struct DeepMathHelper {
-    data: DataStore
+    data: DataStore,
+    auth: Authorization
+}
+
+impl DeepMathHelper {
+    fn write_settings(&mut self) {
+        if let Err(error) = write_file(&self.data.settings) {
+            let message = "Failed to switch theme.";
+            if_ultimate_version!(eprintln!("{} {error}", &message));
+            self.data.container.pending.push(displayable_err!(message));
+        }
+    }
 }
 
 impl Application for DeepMathHelper {
@@ -19,8 +31,11 @@ impl Application for DeepMathHelper {
     type Flags = ();
 
     fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
+        let data = DataStore::default();
+        let master_key = data.settings.master_key.clone();
+
         (
-            DeepMathHelper { data: DataStore::default() },
+            DeepMathHelper { data, auth: Authorization::from(master_key) },
             Command::none()
         )
     }
@@ -40,15 +55,7 @@ impl Application for DeepMathHelper {
             Message::SwitchTheme => {
                 self.data.settings.theme.switch();
 
-                if let Err(error) = write_file(&self.data.settings) {
-                    let message = "Failed to switch theme.";
-                    
-                    if_ultimate_version! {
-                        eprintln!("{} {error}", &message);
-                    }
 
-                    self.data.container.pending.push(displayable_err!(message));
-                }
             },
             Message::SetPage(page) => {
                 if let Page::Selection = page {
@@ -80,10 +87,10 @@ impl Application for DeepMathHelper {
                 self.data.container.cell_4 = cell_4;
             },
             Message::SwitchTrigonometricPart => {
-                self.data.container.part = self.data.container.part.next();
+                self.data.container.trig_values.part = self.data.container.trig_values.part.next();
             },
             Message::SwitchTrigonometricUnit => {
-                self.data.container.unit = self.data.container.unit.next();
+                self.data.container.trig_values.unit = self.data.container.trig_values.unit.next();
             },
             Message::Calculate => {
                 let result = self.data.container.calculate(&self.data.current_page);
@@ -96,6 +103,14 @@ impl Application for DeepMathHelper {
                 }
 
                 self.data.container.pending.push(result);
+            },
+            Message::CheckAuth => {
+                let entered_master_key = self.data.container.cell_1.clone();
+
+                // TODO: Release client api.
+
+                self.data.settings.master_key = entered_master_key; // Moved here!
+                self.write_settings();
             }
         };
 
@@ -103,7 +118,7 @@ impl Application for DeepMathHelper {
     }
 
     fn view(&self) -> ShortElement<'_> {
-        get_scene(&self.data)
+        get_scene(&self.data, &self.auth)
     }
     
     fn theme(&self) -> Self::Theme {

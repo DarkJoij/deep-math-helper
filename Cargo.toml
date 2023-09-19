@@ -1,6 +1,6 @@
 [package]
 name = "deep-math-helper"
-version = "0.23.918-alpha"
+version = "0.23.919-alpha"
 edition = "2021"
 authors = ["DarkJoij"]
 description = "An application for performing mathematical calculations*."
@@ -13,4 +13,4 @@ serde_json = "1.0.107"
 
 [features]
 default = []
-ultimate = []
+# ultimate = [] # TODO: Uncomment after client api release.

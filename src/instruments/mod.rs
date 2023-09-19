@@ -4,7 +4,7 @@ pub mod trigonometry;
 
 use crate::res_err;
 use crate::gui::tools::Page;
-use crate::helpers::{Part, Unit};
+use crate::helpers::{Part, Unit, TrigonometryValues};
 use crate::settings::Settings;
 
 use std::fmt::{Display, Formatter, Result as FmtResult};
@@ -49,9 +49,8 @@ pub struct Container {
     pub cell_2: String,
     pub cell_3: String,
     pub cell_4: String,
-    pub part: Part,
-    pub unit: Unit,
-    pub pending: Vec<DisplayableResult>
+    pub pending: Vec<DisplayableResult>,
+    pub trig_values: TrigonometryValues
 }
 
 impl Container {

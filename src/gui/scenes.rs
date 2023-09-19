@@ -1,12 +1,19 @@
-use crate::gui::defaults::*;
-use crate::gui::tools::{Message, Page, ShortElement};
+use crate::if_ultimate_version;
 use crate::instruments::{DataStore, DisplayableResult};
 use crate::helpers::{Part, DisplayNames};
+use super::auth::{Authorization, get_auth_new_page};
+use super::defaults::*;
+use super::tools::{Message, Page, ShortElement};
 
 use iced::Alignment;
 use iced::widget::{Button, Column};
 
-pub fn get_scene(data: &DataStore) -> ShortElement {
+pub fn get_scene<'a>(data: &'a DataStore, auth: &Authorization) -> ShortElement<'a> {
+    match get_auth_new_page(data, auth) {
+        None => if_ultimate_version!(println!("Already authorized.")),
+        Some(page) => return page.into()
+    }
+
     let mut main = get_default_column();
     let mut current_page = match data.current_page {
         Page::Selection => get_selection_page(),
@@ -15,12 +22,12 @@ pub fn get_scene(data: &DataStore) -> ShortElement {
         Page::Trigonometry => get_trigonometry_pages(data)
     };
 
-    if data.current_page != Page::Selection { // From here...
+    if data.current_page != Page::Selection {
         current_page = current_page.push(get_calc_button())
             .push(get_back_button());
     } else {
         main = main.push(get_theme_button(data));
-    } // ... to here code must be refactored.
+    }
 
     main = main.push(current_page);
 
@@ -90,8 +97,8 @@ fn get_bases_converter_page<'a>(data: &DataStore) -> Column<'a, Message> {
 }
 
 fn get_trigonometry_pages(data: &DataStore) -> Column<Message> {
-    let part = data.container.part.display_name();
-    let unit = data.container.unit.display_name();
+    let part = data.container.trig_values.part.display_name();
+    let unit = data.container.trig_values.unit.display_name();
     let literals = [
         "sin", "cos", "tan", "cot"
     ];
@@ -120,7 +127,7 @@ fn get_trigonometry_pages(data: &DataStore) -> Column<Message> {
         let field = fields[index];
         let message = messages[index];
 
-        if let Part::ArcFunctions = data.container.part {
+        if let Part::ArcFunctions = data.container.trig_values.part {
             literal.push('a');
         }
 

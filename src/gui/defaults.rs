@@ -1,4 +1,4 @@
-use crate::gui::tools::Message;
+use super::tools::Message;
 
 use iced::{Alignment, Length, Padding};
 use iced::alignment::{Horizontal, Vertical};

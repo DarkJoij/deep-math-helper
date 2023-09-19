@@ -46,12 +46,3 @@ macro_rules! displayable_err {
         crate::instruments::DisplayableResult::Error(format!($($arg)*))
     };
 }
-
-/// Untyped macro invoke.
-#[warn(unstable_features)]
-#[macro_export]
-macro_rules! switcher {
-    ($val_1:expr, $val_2:expr) => {
-        crate::gui::tools::Switcher::new($val_1, $val_2)
-    };
-}

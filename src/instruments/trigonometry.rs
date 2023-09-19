@@ -1,7 +1,5 @@
-use crate::instruments::{DisplayableResult, Part, Unit};
-
 use crate::{displayable_err, displayable_ok, res_err};
-use super::{Container, Res};
+use super::{Container, DisplayableResult, Part, Res, Unit};
 
 use std::f64::consts::PI; // Must be replaced with [`FloatConst::PI()`].
 use std::fmt::{Display, Formatter, Result};
@@ -12,13 +10,13 @@ impl Container {
     pub fn evaluate(&self) -> Vec<DisplayableResult> {
         let cells = self.cells();
         let mut results = Vec::new();
-        let funcs = Function::get_all(self.part);
+        let funcs = Function::get_all(self.trig_values.part);
 
         for index in 0..4 {
             let cell = cells[index];
 
             if !cell.is_empty() {
-                let value = match TrigonometryValue::from(cell, self.unit) {
+                let value = match TrigonometryValue::from(cell, self.trig_values.unit) {
                     Res::Ok(value) => value,
                     Res::Err(message) => {
                         results.push(displayable_err!(message));
@@ -135,6 +133,6 @@ impl Display for TryRound {
             _ => return write!(f, "{}", self.0)
         };
 
-        write!(f, "{}", if (self.0 - rounded).abs() < 0.000001 { rounded } else { self.0 })
+        write!(f, "{}", if (self.0 - rounded).abs() < 0.000001f64 { rounded } else { self.0 })
     }
 }

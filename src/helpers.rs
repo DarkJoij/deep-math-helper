@@ -2,6 +2,12 @@ use std::fmt::{Debug, Display, Formatter, Result};
 
 use iced::Theme;
 
+#[derive(Default)]
+pub struct TrigonometryValues {
+    pub part: Part,
+    pub unit: Unit
+}
+
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum Part {
     #[default]

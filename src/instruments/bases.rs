@@ -29,7 +29,7 @@ impl Container {
 }
 
 fn check(bases: &[usize]) -> Res<()> {
-    let biggest_base = if_ultimate_version! {{ 36 } else { 16 }};
+    let biggest_base = if_ultimate_version! {{ 36 } else { 25 }};
 
     for &base in bases {
         let greater = base > biggest_base;
