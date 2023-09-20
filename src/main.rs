@@ -1,3 +1,4 @@
+mod auth;
 mod gui;
 mod instruments;
 mod helpers;

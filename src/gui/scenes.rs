@@ -1,7 +1,7 @@
 use crate::if_ultimate_version;
+use crate::auth::{Authorization, get_auth_new_page};
 use crate::instruments::{DataStore, DisplayableResult};
 use crate::helpers::{Part, DisplayNames};
-use super::auth::{Authorization, get_auth_new_page};
 use super::defaults::*;
 use super::tools::{Message, Page, ShortElement};
 

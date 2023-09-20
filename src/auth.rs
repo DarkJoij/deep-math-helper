@@ -1,34 +1,38 @@
 use crate::if_ultimate_version;
+use crate::gui::defaults::*;
+use crate::gui::tools::Message;
 use crate::instruments::DataStore;
-use super::defaults::*;
-use super::tools::Message;
 
 use iced::widget::Column;
-
-pub type MasterKey = String;
+use serde::{Deserialize, Serialize};
 
 pub enum AuthResult {
     Successful(u8),
     Invalid(String)
 }
 
+#[derive(Clone, Deserialize, Serialize)]
 pub struct Authorization {
-    master_key: MasterKey
-}
-
-impl From<MasterKey> for Authorization {
-    fn from(value: MasterKey) -> Self {
-        Authorization {
-            master_key: value
-        }
-    }
+    login: String,
+    password: String
 }
 
 impl Authorization {
+    pub fn from(login: String, password: String) -> Self {
+        Authorization { login, password }
+    }
+
     pub fn is_authorized(&self) -> bool {
         // TODO: Implement server api.
 
-        true
+        false
+    }
+}
+
+impl Default for Authorization {
+    fn default() -> Self {
+        let unreg = "unregistered";
+        Self::from(unreg.to_owned(), unreg.to_owned())
     }
 }
 
@@ -40,12 +44,13 @@ pub fn get_auth_new_page<'a>(data: &DataStore, auth: &Authorization) -> Option<C
 
         let disclamer = get_default_text(
             "Для пользования Ultimate версией приложения Вам необхрдимо иметь \
-            мастер-ключ продукта. Введите его в поле ниже.".to_owned()
+            логин и пароль лицензионного продукта. Введите их в поля ниже.".to_owned()
         );
-        let master_key_field = get_default_text_input(
-            "Введите Ваш мастер-ключ:",
-            &data.container.cell_1,
-            Message::UpdateCell1
+        let login_field = get_default_text_input(
+            "Логин:", &data.container.cell_1, Message::UpdateCell1
+        );
+        let password_field = get_default_text_input(
+            "Пароль:", &data.container.cell_2, Message::UpdateCell2
         );
         let login_button = get_default_button(
             "Войти", Message::CheckAuth
@@ -53,7 +58,8 @@ pub fn get_auth_new_page<'a>(data: &DataStore, auth: &Authorization) -> Option<C
 
         let auth_page = get_default_column()
             .push(disclamer)
-            .push(master_key_field)
+            .push(login_field)
+            .push(password_field)
             .push(login_button);
 
         Some(auth_page)

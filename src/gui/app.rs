@@ -1,8 +1,8 @@
 use crate::{displayable_err, if_ultimate_version};
+use crate::auth::Authorization;
 use crate::instruments::{Container, DataStore, DisplayableResult};
 use crate::helpers::PseudoIterator;
 use crate::settings::write_file;
-use super::auth::Authorization;
 use super::scenes::get_scene;
 use super::tools::{Message, Page, ShortElement};
 
@@ -32,10 +32,10 @@ impl Application for DeepMathHelper {
 
     fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
         let data = DataStore::default();
-        let master_key = data.settings.master_key.clone();
+        let auth = data.settings.auth.clone();
 
         (
-            DeepMathHelper { data, auth: Authorization::from(master_key) },
+            DeepMathHelper { data, auth },
             Command::none()
         )
     }
@@ -104,11 +104,12 @@ impl Application for DeepMathHelper {
                 self.data.container.pending.push(result);
             },
             Message::CheckAuth => {
-                let entered_master_key = self.data.container.cell_1.clone();
+                let login = self.data.container.cell_1.clone();
+                let password = self.data.container.cell_2.clone();
 
                 // TODO: Release client api.
 
-                self.data.settings.master_key = entered_master_key; // Moved here!
+                self.data.settings.auth = Authorization::from(login, password);
                 self.write_settings();
             }
         };

@@ -1,3 +1,4 @@
+pub mod auth;
 pub mod gui;
 pub mod instruments;
 pub mod helpers;

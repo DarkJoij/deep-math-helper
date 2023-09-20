@@ -1,4 +1,4 @@
-use crate::gui::auth::MasterKey;
+use crate::auth::Authorization;
 use crate::helpers::{Switcher, DisplayNames};
 
 use iced::Theme;
@@ -12,7 +12,7 @@ const SETTINGS_FILE_NAME: &str = "settings.json";
 
 pub struct Settings {
     pub theme: Switcher<Theme>,
-    pub master_key: MasterKey
+    pub auth: Authorization
 }
 
 impl Settings {
@@ -21,7 +21,7 @@ impl Settings {
 
         DirtySettings { 
             theme: sys_theme_name.to_owned(),
-            master_key: self.master_key.clone()
+            auth: self.auth.clone()
         }
     }
 }
@@ -36,7 +36,7 @@ impl From<&DirtySettings> for Settings {
 
         Settings {
             theme,
-            master_key: value.master_key.clone()
+            auth: value.auth.clone()
         }
     }
 }
@@ -53,13 +53,19 @@ impl Default for Settings {
 #[derive(Deserialize, Serialize)]
 pub struct DirtySettings {
     pub theme: String,
-    pub master_key: String
+    pub auth: Authorization
 }
 
 impl DirtySettings {
     #[warn(unstable_features)]
     fn get_str_skip_serialization() -> &'static str {
-        "{\n  \"theme\": \"Light\",\n  \"master_key\": \"unregistered\"\n}"
+        "{\
+        \n  \"theme\": \"Light\",\
+        \n  \"auth\": {\
+        \n    \"login\": \"unregistered\",\
+        \n    \"password\": \"unregistered\"\
+        \n  }\
+        \n}"
     }
 }
 
@@ -67,7 +73,7 @@ impl Default for DirtySettings {
     fn default() -> Self {
         DirtySettings {
             theme: "Light".to_owned(),
-            master_key: "unregistered".to_owned()
+            auth: Authorization::default()
         }
     }
 }
