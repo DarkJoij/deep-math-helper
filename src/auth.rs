@@ -43,7 +43,7 @@ pub fn get_auth_new_page<'a>(data: &DataStore, auth: &Authorization) -> Option<C
         }
 
         let disclamer = get_default_text(
-            "Для пользования Ultimate версией приложения Вам необхрдимо иметь \
+            "Для пользования Ultimate версией приложения Вам необходимо иметь \
             логин и пароль лицензионного продукта. Введите их в поля ниже.".to_owned()
         );
         let login_field = get_default_text_input(
